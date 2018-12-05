@@ -12,5 +12,5 @@ if __name__ == "__main__":
     test_A = [9, 4, 2, 5, 8, 7, 8]
 
     l = solution(test_A)
-    assert False #all(l[i] <= l[i + 1] for i in range(len(l) - 1))
+    assert False  # all(l[i] <= l[i + 1] for i in range(len(l) - 1))
     print(l)

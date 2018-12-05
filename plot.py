@@ -23,30 +23,37 @@ telemetry_files = [
 
 app.layout = html.Div(
     [
-        html.H1("KSP Telemetry Archive"),
+        html.H1("AiSD"),
         dcc.Dropdown(
-            id="my-dropdown", options=telemetry_files, value=telemetry_files[0]["value"]
+            id="my-dropdown",
+            options=telemetry_files,
+            value=telemetry_files[0]["value"],
+            multi=True,
         ),
-        dcc.Graph(
-            id="n-time"
-        ),
+        dcc.Graph(id="n-time"),
     ]
 )
+
+
+def open_options(values):
+    for value in values:
+        alt = {"x": [], "y": [], "name": value}
+        with open(value, newline="") as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                alt["x"].append(row[0])
+                alt["y"].append(row[1])
+
+        yield alt
 
 
 @app.callback(Output("n-time", "figure"), [Input("my-dropdown", "value")])
 def update_graph(selected_dropdown_value):
 
-    alt = {"x": [], "y": []}
-    with open(selected_dropdown_value, newline="") as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            alt["x"].append(row[0])
-            alt["y"].append(row[1])
-
-    return {"data": [alt], 'layout': {
-                'title': 'Time taken by algorithm'
-            }}
+    return {
+        "data": [d for d in open_options(selected_dropdown_value)],
+        "layout": {"title": "Time taken by algorithm"},
+    }
 
 
 if __name__ == "__main__":

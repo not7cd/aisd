@@ -2,27 +2,29 @@ import sys
 import logging
 import timeit
 import random
-from straight_selection import solution
-
 import matplotlib.pyplot as plt
+
+from straight_selection import solution as solution
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def test_sorted():
+def test_sorted(f):
     A = [9, 4, 2, 5, 8, 7, 8]
-    A = solution(A)
-    assert all(A[i] <= A[i + 1] for i in range(len(A) - 1))
+    logger.info(f)
+    B = f(A)
+    if all(B[i] <= B[i + 1] for i in range(len(B) - 1)):
+        pass
+    else:
+        raise Exception(B)
 
 
 def time_test_gen():
-    for n in range(10, 300, 10):
+    for n in range(10, 500, 10):
         A = [random.random() for _ in range(n)]
-        timer = timeit.Timer(
-            f"solution({A})", setup="from __main__ import solution"
-        )
-
+        logger.debug(A)
+        timer = timeit.Timer(f"solution({A})", setup="from __main__ import solution")
         l, t = timer.autorange()
         yield (n, t / l)
 
@@ -41,7 +43,8 @@ def test_timeit():
 
 
 if __name__ == "__main__":
-    test_sorted()
+
+    test_sorted(solution)
     test_timeit()
 
-    # print("All done!")
+    # print("All done!")2
